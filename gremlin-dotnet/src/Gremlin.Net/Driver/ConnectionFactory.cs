@@ -27,7 +27,7 @@ using Gremlin.Net.Structure.IO.GraphSON;
 
 namespace Gremlin.Net.Driver
 {
-    internal class ConnectionFactory
+    internal class ConnectionFactory : IConnectionFactory
     {
         private readonly GraphSONReader _graphSONReader;
         private readonly GraphSONWriter _graphSONWriter;
@@ -45,7 +45,7 @@ namespace Gremlin.Net.Driver
             _webSocketConfiguration = webSocketConfiguration;
         }
 
-        public Connection CreateConnection()
+        public IConnection CreateConnection()
         {
             return new Connection(_gremlinServer.Uri, _gremlinServer.Username, _gremlinServer.Password, _graphSONReader,
                                  _graphSONWriter, _mimeType, _webSocketConfiguration);
