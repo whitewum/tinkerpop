@@ -26,18 +26,18 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Gremlin.Net.Driver.Messages;
 using Gremlin.Net.Process;
 using Gremlin.Net.Structure.IO.GraphSON;
-using Newtonsoft.Json.Linq;
 
 namespace Gremlin.Net.Driver
 {
     internal interface IResponseHandlerForSingleRequestMessage
     {
-        void HandleReceived(ResponseMessage<JToken> received);
+        void HandleReceived(ResponseMessage<JsonElement> received);
         void Finalize(Dictionary<string, object> statusAttributes);
         void HandleFailure(Exception objException);
     }
@@ -116,7 +116,7 @@ namespace Gremlin.Net.Driver
 
         private void Parse(byte[] received)
         {
-            var receivedMsg = _messageSerializer.DeserializeMessage<ResponseMessage<JToken>>(received);
+            var receivedMsg = _messageSerializer.DeserializeMessage<ResponseMessage<JsonElement>>(received);
             if (receivedMsg == null)
             {
                 ThrowMessageDeserializedNull();
@@ -138,7 +138,7 @@ namespace Gremlin.Net.Driver
         private static void ThrowMessageDeserializedNull() =>
             throw new InvalidOperationException("Received data deserialized into null object message. Cannot operate on it.");
 
-        private void TryParseResponseMessage(ResponseMessage<JToken> receivedMsg)
+        private void TryParseResponseMessage(ResponseMessage<JsonElement> receivedMsg)
         {
             var status = receivedMsg.Status;
             status.ThrowIfStatusIndicatesError();
